@@ -3,23 +3,23 @@ export class RESTful {
     constructor(defaultOptions: RequestInit) {
         this.defaultOptions = defaultOptions;
     }
-    public post(url: string, data: RequestInit) {
+    public post(url: string, data: RequestInit = {}) {
         return RESTful.post(url, { ...this.defaultOptions, ...data });
     }
 
-    public get(url: string, data: RequestInit) {
+    public get(url: string, data: RequestInit = {}) {
         return RESTful.get(url, { ...this.defaultOptions, ...data });
     }
 
-    public delete(url: string, data: RequestInit) {
+    public delete(url: string, data: RequestInit = {}) {
         return RESTful.delete(url, { ...this.defaultOptions, ...data });
     }
 
-    public options(url: string, data: RequestInit) {
+    public options(url: string, data: RequestInit = {}) {
         return RESTful.options(url, { ...this.defaultOptions, ...data });
     }
 
-    public put(url: string, data: RequestInit) {
+    public put(url: string, data: RequestInit = {}) {
         return RESTful.put(url, { ...this.defaultOptions, ...data });
     }
 
