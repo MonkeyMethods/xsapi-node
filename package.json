@@ -1,0 +1,23 @@
+{
+  "name": "xsapi-node",
+  "version": "0.0.1",
+  "description": "A TypeScript Xbox Service API wrapper.",
+  "main": "dist/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "build": "npx tsc --project tsconfig.json"
+  },
+  "keywords": [
+    "api",
+    "xbox",
+    "services",
+    "wrapper",
+    "ts",
+    "typescript"
+  ],
+  "author": "TrippleAWap, THEBOSS9345",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.12.7"
+  }
+}

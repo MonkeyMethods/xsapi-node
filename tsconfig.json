@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist",
+        "module": "NodeNext",
+        "target": "ESNext",
+        "sourceMap": true,
+        "rootDir": "./src",
+        "declaration": true, // Disable declaration file generation
+        "emitDeclarationOnly": false
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
