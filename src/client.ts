@@ -21,7 +21,7 @@ export class Client {
 
     public profiles = {
         getUserSettings: async (XUIDs: string[], settings: UserSettings[]) => {
-            const response = await RESTful.post('https://profile.xboxlive.com/users/batch/profile/settings', {
+            const response = await this.restful.post('https://profile.xboxlive.com/users/batch/profile/settings', {
                 body: JSON.stringify({
                     "userIds": XUIDs,
                     "settings": settings
@@ -46,6 +46,19 @@ export class Client {
             }
 
             return userSettings;
+        },
+        getUserAchievements: async (XUID: string, titleId: number) => {
+            const response = await this.restful.get(`https://achievements.xboxlive.com/users/xuid(${XUID})/achievements`, {
+                headers: {
+                    "X-TitleId": titleId.toString()
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch user achievements: ${response.statusText}`);
+            }
+
+            return await response.json();
         }
     }
 }
