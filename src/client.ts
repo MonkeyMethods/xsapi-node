@@ -187,6 +187,8 @@ export class Client {
             headers: {
                 "x-xbl-contract-version": 2 as unknown as string,
                 "content-type": "application/json",
+                "accept-language": "en-US",
+                "accept": "application/json",
                 "Authorization": this.XBL,
                 'host': 'userpresence.xboxlive.com',
             }
