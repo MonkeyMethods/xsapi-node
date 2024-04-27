@@ -1,5 +1,5 @@
 (() => {
-    const { execSync, exec } = require('child_process');
+    const { execSync } = require('child_process');
     const fs = require('fs');
     const examples = fs.readdirSync(__dirname).filter(file => file.endsWith('.js') && file !== 'runall.js');
     for (const file of examples) {
