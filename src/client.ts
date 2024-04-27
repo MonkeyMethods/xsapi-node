@@ -56,6 +56,61 @@ type AchievementsResponse = {
     };
 };
 
+type PresenceRecord = {
+    xuid: string;
+    state: string;
+    lastSeen?: {
+        deviceType: string;
+        titleId: string;
+        titleName: string;
+        timestamp: string;
+    };
+    devices?: {
+        type: string;
+        titles: {
+            id: string;
+            name: string;
+            state: string;
+            placement: string;
+            timestamp: string;
+            activity?: {
+                richPresence: string;
+            };
+        }[];
+    }[];
+};
+
+type BroadCastingPresenceRecord = {
+    xuid: string;
+    state: string;
+    lastSeen?: {
+        deviceType: string;
+        titleId: string;
+        titleName: string;
+        timestamp: string;
+    };
+    devices?: {
+        type: string;
+        titles: {
+            id: string;
+            name: string;
+            state: string;
+            placement: string;
+            timestamp: string;
+            activity?: {
+                richPresence: string;
+                broadcast:
+                {
+                    id: string,
+                    session: string,
+                    provider: string,
+                    started: string,
+                    viewers: number,
+                }
+            };
+        }[];
+    }[];
+}[];
 
 export class Client {
     private authorizationData: AuthorizationData;
@@ -70,6 +125,9 @@ export class Client {
                 "x-xbl-contract-version": 2 as unknown as string,
                 "content-type": "application/json",
                 "Authorization": this.XBL,
+                'Accept': 'application/json',
+                'Accept-Language': 'en-US',
+                'host': 'userpresence.xboxlive.com',
             }
         })
     }
@@ -114,6 +172,99 @@ export class Client {
         }
         return (await response.json())
     }
-    
-}
 
+    public async getCurrentPresence(): Promise<PresenceRecord> {
+        const response = await this.restful.get('https://userpresence.xboxlive.com/users/me', {});
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch current user presence: ${response.statusText}`);
+        }
+        return (await response.json()) as PresenceRecord;
+    }
+
+    public async getBatchUserPresence(XUIDs: string[]): Promise<PresenceRecord[]> {
+        if (!Array.isArray(XUIDs) || XUIDs.length === 0) {
+            throw new Error("XUIDs must be an array with at least one xuid of a user.");
+        }
+
+        const response = await this.restful.post('https://userpresence.xboxlive.com/users/batch', {
+            body: JSON.stringify({
+                users: XUIDs,
+            })
+        })
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch batch user presence: ${response.statusText}`);
+        }
+
+        return (await response.json()) as PresenceRecord[];
+    }
+
+    public async getCurrentGroupPresence(): Promise<PresenceRecord[]> {
+        const response = await this.restful.get('https://userpresence.xboxlive.com/users/me/people', {});
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch current user group presence: ${response.statusText}`);
+        }
+
+        return (await response.json()) as PresenceRecord[];
+    }
+
+    public async updateTitlePresence(xuid: string, id: string, placement: string, state: string): Promise<any> {
+        const response = await this.restful.post(`https://userpresence.xboxlive.com/users/xuid(${xuid})/devices/current/titles/current`, {
+            body: JSON.stringify({ id, placement, state })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to update title presence: ${response.statusText}`);
+        }
+
+        return await response.json();
+    }
+
+    public async removeTitlePresence(xuid: string, titleId: string, deviceId?: string, deviceType?: string): Promise<void> {
+        const response = await this.restful.delete(`https://userpresence.xboxlive.com/users/xuid(${xuid})/devices/current/titles/${titleId}`, {
+            headers: {
+                "Authorization": this.XBL,
+                "x-xbl-contract-version": "2",
+                "Host": "userpresence.xboxlive.com",
+                ...(deviceId && { "deviceId": deviceId }),
+                ...(deviceType && { "deviceType": deviceType }),
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to remove title presence: ${response.statusText}`);
+        }
+        return await response.json();
+    }
+
+    public async getGroupPresence(xuid: string, moniker: string, level: string = 'title'): Promise<PresenceRecord[]> {
+        const response = await this.restful.get(`https://userpresence.xboxlive.com/users/xuid(${xuid})/groups/${moniker}?level=${level}`, {});
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch group presence: ${response.statusText}`);
+        }
+
+        return (await response.json()) as PresenceRecord[];
+    }
+
+    public async getGroupBroadcastingPresence(xuid: string, moniker: string = 'People', level: string = 'title'): Promise<BroadCastingPresenceRecord> {
+        const response = await this.restful.get(`https://userpresence.xboxlive.com/users/xuid(${xuid})/groups/${moniker}/broadcasting?level=${level}`, {});
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch group broadcasting presence: ${response.statusText}`);
+        }
+
+        return (await response.json()) as BroadCastingPresenceRecord;
+    }
+
+    public async getGroupBroadcastingCount(xuid: string, moniker: string = 'People', level: string = 'title'): Promise<any> {
+        const response = await this.restful.get(`https://userpresence.xboxlive.com/users/xuid(${xuid})/groups/${moniker}/broadcasting/count?level=${level}`, {});
+        console.log(response)
+        if (!response.ok) {
+            throw new Error(`Failed to fetch group broadcasting count: ${response.statusText}`);
+        }
+
+        return (await response.json()) as { count: number };
+    }
+}

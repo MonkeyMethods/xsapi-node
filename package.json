@@ -19,5 +19,9 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.12.7"
+  },
+  "dependencies": {
+    "prismarine-auth": "^2.4.2",
+    "typescript": "^5.4.5"
   }
 }
