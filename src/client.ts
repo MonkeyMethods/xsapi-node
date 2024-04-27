@@ -1,4 +1,3 @@
-import { types } from "util";
 import { AuthorizationData } from "./globals";
 import { RESTful } from "./RESTful";
 /** A type representing an Xbox User ID */
@@ -231,7 +230,7 @@ export class Client {
         return await response.json();
     }
 
-    public async getFollowersXUIDs(XUID: XUID, options: { maxItems: number, startIndex: number }): Promise<XUID[]> {
+    public async getFollowersXUIDs(XUID: XUID): Promise<XUID[]> {
         const response = await this.restful.get(`https://social.xboxlive.com/users/xuid(${XUID})/people/friends`, {
             "headers": {
                 "XUID": XUID,
@@ -243,7 +242,7 @@ export class Client {
         return (await response.json()).xuids
     }
 
-    public async getViewAsUser(viewerXUID: XUID, viewingXUID: XUID): Promise<{     "targetFollowingCount": number, "targetFollowerCount": number, "isCallerFollowingTarget": boolean, "isTargetFollowingCaller": boolean, "hasCallerMarkedTargetAsFavorite": boolean, "hasCallerMarkedTargetAsKnown": boolean, "legacyFriendStatus": string, "recentChangeCount": number, "watermark": string }> {
+    public async getViewAsUser(viewerXUID: XUID, viewingXUID: XUID): Promise<{ "targetFollowingCount": number, "targetFollowerCount": number, "isCallerFollowingTarget": boolean, "isTargetFollowingCaller": boolean, "hasCallerMarkedTargetAsFavorite": boolean, "hasCallerMarkedTargetAsKnown": boolean, "legacyFriendStatus": string, "recentChangeCount": number, "watermark": string }> {
         const response = await this.restful.get(`https://social.xboxlive.com/users/${viewingXUID}/summary`, {
             "headers": {
                 "XUID": viewerXUID,
@@ -254,6 +253,6 @@ export class Client {
         }
         return await response.json();
     }
-    
+
 }
 
