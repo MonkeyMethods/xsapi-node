@@ -129,6 +129,8 @@ export class Client {
             headers: {
                 "x-xbl-contract-version": 2 as unknown as string,
                 "content-type": "application/json",
+                "accept-language": "en-US",
+                "accept": "application/json",
                 "Authorization": this.XBL,
             }
         })
@@ -248,7 +250,12 @@ export class Client {
     // People URIs <social.xboxlive.com> | <https://learn.microsoft.com/en-us/gaming/gdk/_content/gc/reference/live/rest/uri/people/atoc-reference-people>
 
     public async getFollowers(XUID: XUID, options: { view: ("All" | "Favorite" | "LegacyXboxLiveFriends"), maxItems: number, startIndex: number }): Promise<{ "people": { "xuid": XUID, "isFavorite": boolean, "isFollowingCaller": boolean, "socialNetworks"?: string[] }, "totalCount": number }> {
-        const response = await this.restful.get(`https://social.xboxlive.com/users/xuid(${XUID})/people/followers`, {
+        const params = new URLSearchParams();
+        for (const key in options) {
+            params.append(key, String(options[key]));
+        }
+
+        const response = await this.restful.get(`https://social.xboxlive.com/users/xuid(${XUID})/people?${params.toString()}`, {
             "headers": {
                 "XUID": XUID,
             }
@@ -273,7 +280,7 @@ export class Client {
     }
 
     public async getFollowersAsUser(userXUID: XUID, targetXUID: XUID): Promise<{ "xuid": XUID, "isFavorite": boolean, "isFollowingCaller": boolean, "socialNetworks"?: string[] }> {
-        const response = await this.restful.get(`https://social.xboxlive.com/users/${userXUID}/people/${targetXUID}`, {
+        const response = await this.restful.post(`https://social.xboxlive.com/users/${userXUID}/people/${targetXUID}`, {
             "headers": {
                 "XUID": userXUID,
             }
@@ -298,7 +305,7 @@ export class Client {
     }
 
     public async getFollowersXUIDs(XUID: XUID): Promise<XUID[]> {
-        const response = await this.restful.get(`https://social.xboxlive.com/users/xuid(${XUID})/people/friends`, {
+        const response = await this.restful.get(`https://social.xboxlive.com/users/xuid(${XUID})/people/xuids`, {
             "headers": {
                 "XUID": XUID,
             }
