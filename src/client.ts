@@ -204,5 +204,56 @@ export class Client {
         }
         return;
     }
+
+    // People URIs <social.xboxlive.com> | <https://learn.microsoft.com/en-us/gaming/gdk/_content/gc/reference/live/rest/uri/people/atoc-reference-people>
+
+    public async getFollowers(XUID: XUID, options: { view: ("All" | "Favorite" | "LegacyXboxLiveFriends"), maxItems: number, startIndex: number }): Promise<{ "people": { "xuid": XUID, "isFavorite": boolean, "isFollowingCaller": boolean, "socialNetworks"?: string[] }, "totalCount": number }> {
+        const response = await this.restful.get(`https://social.xboxlive.com/users/xuid(${XUID})/people/followers`, {
+            "headers": {
+                "XUID": XUID,
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to fetch followers: ${response.statusText}`);
+        }
+        return await response.json();
+    }
+
+    public async getFollowersAsUser(userXUID: XUID, targetXUID: XUID): Promise<{ "xuid": XUID, "isFavorite": boolean, "isFollowingCaller": boolean, "socialNetworks"?: string[] }> {
+        const response = await this.restful.get(`https://social.xboxlive.com/users/${userXUID}/people/${targetXUID}`, {
+            "headers": {
+                "XUID": userXUID,
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to fetch following: ${response.statusText}`);
+        }
+        return await response.json();
+    }
+
+    public async getFollowersXUIDs(XUID: XUID, options: { maxItems: number, startIndex: number }): Promise<XUID[]> {
+        const response = await this.restful.get(`https://social.xboxlive.com/users/xuid(${XUID})/people/friends`, {
+            "headers": {
+                "XUID": XUID,
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to fetch friends: ${response.statusText}`);
+        }
+        return (await response.json()).xuids
+    }
+
+    public async getViewAsUser(viewerXUID: XUID, viewingXUID: XUID): Promise<{     "targetFollowingCount": number, "targetFollowerCount": number, "isCallerFollowingTarget": boolean, "isTargetFollowingCaller": boolean, "hasCallerMarkedTargetAsFavorite": boolean, "hasCallerMarkedTargetAsKnown": boolean, "legacyFriendStatus": string, "recentChangeCount": number, "watermark": string }> {
+        const response = await this.restful.get(`https://social.xboxlive.com/users/${viewingXUID}/summary`, {
+            "headers": {
+                "XUID": viewerXUID,
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to fetch view: ${response.statusText}`);
+        }
+        return await response.json();
+    }
+    
 }
 
