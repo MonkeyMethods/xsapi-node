@@ -143,7 +143,20 @@ export class Client {
         });
 
         if (!response.ok) {
-            throw new Error(`Failed to fetch user settings: ${response.statusText}`);
+
+            let errorDisplayed = {} as any;
+            try {
+                errorDisplayed.json = await response.json();
+            } catch { };
+            errorDisplayed.statusText = response.statusText;
+            errorDisplayed.status = response.status;
+            errorDisplayed.url = response.url;
+            errorDisplayed.headers = response.headers;
+            errorDisplayed.ok = response.ok;
+            try {
+                errorDisplayed.text = await response.text();
+            } catch { };
+            throw new Error(`Failed to fetch user settings ${JSON.stringify(errorDisplayed, null, 4)}:`);
         }
 
         const data = await response.json();
@@ -170,7 +183,20 @@ export class Client {
         const response = await this.restful.get(`https://achievements.xboxlive.com/users/xuid(${XUID})/achievements${params.toString()}`, {});
 
         if (!response.ok) {
-            throw new Error(`Failed to fetch user achievements: ${response.statusText}`);
+
+            let errorDisplayed = {} as any;
+            try {
+                errorDisplayed.json = await response.json();
+            } catch { };
+            errorDisplayed.statusText = response.statusText;
+            errorDisplayed.status = response.status;
+            errorDisplayed.url = response.url;
+            errorDisplayed.headers = response.headers;
+            errorDisplayed.ok = response.ok;
+            try {
+                errorDisplayed.text = await response.text();
+            } catch { };
+            throw new Error(`Failed to fetch user achievements ${JSON.stringify(errorDisplayed, null, 4)}:`);
         }
         return (await response.json())
     }
@@ -179,7 +205,20 @@ export class Client {
     public async getMultiplayerActivity(titleId: number, XUID: XUID): Promise<GetActivityResponse> {
         const response = await this.restful.get(`https://multiplayeractivity.xboxlive.com/titles/${titleId}/users/${XUID}/activities`);
         if (!response.ok) {
-            throw new Error(`Failed to fetch multiplayer activity: ${response.statusText}`);
+
+            let errorDisplayed = {} as any;
+            try {
+                errorDisplayed.json = await response.json();
+            } catch { };
+            errorDisplayed.statusText = response.statusText;
+            errorDisplayed.status = response.status;
+            errorDisplayed.url = response.url;
+            errorDisplayed.headers = response.headers;
+            errorDisplayed.ok = response.ok;
+            try {
+                errorDisplayed.text = await response.text();
+            } catch { };
+            throw new Error(`Failed to fetch multiplayer activity ${JSON.stringify(errorDisplayed, null, 4)}:`);
         }
         return await response.json();
     }
@@ -189,7 +228,8 @@ export class Client {
             body: JSON.stringify(activity)
         });
         if (!response.ok) {
-            throw new Error(`Failed to update multiplayer activity: ${response.statusText}`);
+
+            throw new Error(`Failed to update multiplayer activity:`);
         }
         return (await response.json());
     }
@@ -199,7 +239,8 @@ export class Client {
             body: JSON.stringify({ sequenceNumber })
         });
         if (!response.ok) {
-            throw new Error(`Failed to delete multiplayer activity: ${response.statusText}`);
+
+            throw new Error(`Failed to delete multiplayer activity:`);
         }
         return;
     }
@@ -213,7 +254,20 @@ export class Client {
             }
         });
         if (!response.ok) {
-            throw new Error(`Failed to fetch followers: ${response.statusText}`);
+
+            let errorDisplayed = {} as any;
+            try {
+                errorDisplayed.json = await response.json();
+            } catch { };
+            errorDisplayed.statusText = response.statusText;
+            errorDisplayed.status = response.status;
+            errorDisplayed.url = response.url;
+            errorDisplayed.headers = response.headers;
+            errorDisplayed.ok = response.ok;
+            try {
+                errorDisplayed.text = await response.text();
+            } catch { };
+            throw new Error(`Failed to fetch followers: ${JSON.stringify(errorDisplayed, null, 4)}`);
         }
         return await response.json();
     }
@@ -225,7 +279,20 @@ export class Client {
             }
         });
         if (!response.ok) {
-            throw new Error(`Failed to fetch following: ${response.statusText}`);
+
+            let errorDisplayed = {} as any;
+            try {
+                errorDisplayed.json = await response.json();
+            } catch { };
+            errorDisplayed.statusText = response.statusText;
+            errorDisplayed.status = response.status;
+            errorDisplayed.url = response.url;
+            errorDisplayed.headers = response.headers;
+            errorDisplayed.ok = response.ok;
+            try {
+                errorDisplayed.text = await response.text();
+            } catch { };
+            throw new Error(`Failed to fetch following: ${JSON.stringify(errorDisplayed, null, 4)}`);
         }
         return await response.json();
     }
@@ -237,7 +304,20 @@ export class Client {
             }
         });
         if (!response.ok) {
-            throw new Error(`Failed to fetch friends: ${response.statusText}`);
+
+            let errorDisplayed = {} as any;
+            try {
+                errorDisplayed.json = await response.json();
+            } catch { };
+            errorDisplayed.statusText = response.statusText;
+            errorDisplayed.status = response.status;
+            errorDisplayed.url = response.url;
+            errorDisplayed.headers = response.headers;
+            errorDisplayed.ok = response.ok;
+            try {
+                errorDisplayed.text = await response.text();
+            } catch { };
+            throw new Error(`Failed to fetch friends: ${JSON.stringify(errorDisplayed, null, 4)}`);
         }
         return (await response.json()).xuids
     }
@@ -249,7 +329,19 @@ export class Client {
             }
         });
         if (!response.ok) {
-            throw new Error(`Failed to fetch view: ${response.statusText}`);
+            let errorDisplayed = {} as any;
+            try {
+                errorDisplayed.json = await response.json();
+            } catch { };
+            errorDisplayed.statusText = response.statusText;
+            errorDisplayed.status = response.status;
+            errorDisplayed.url = response.url;
+            errorDisplayed.headers = response.headers;
+            errorDisplayed.ok = response.ok;
+            try {
+                errorDisplayed.text = await response.text();
+            } catch { };
+            throw new Error(`Failed to fetch view: ${JSON.stringify(errorDisplayed, null, 4)} `);
         }
         return await response.json();
     }
