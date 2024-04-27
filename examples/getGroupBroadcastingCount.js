@@ -5,7 +5,6 @@ const authflow = new prismarineAuth.Authflow("asd", "./profiles", {
     "authTitle": prismarineAuth.Titles.MinecraftNintendoSwitch,
     "flow": "live"
 });
-
 authflow.getXboxToken().then(async (token) => {
     const client = new API.Client(token);
     client.getGroupBroadcastingCount((await authflow.getXboxToken()).userXUID, "People", "user").then(console.log).catch(console.error);

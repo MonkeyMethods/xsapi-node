@@ -175,6 +175,8 @@ type UpdateMultiplayerActivityResponse = {
     "sequenceNumber": string
 }
 
+type levels = 'user' | 'device' | 'title' | 'all'
+
 export class Client {
     private authorizationData: AuthorizationData;
     private restful: RESTful;
@@ -266,7 +268,19 @@ export class Client {
         const response = await this.restful.get('https://userpresence.xboxlive.com/users/me', {});
 
         if (!response.ok) {
-            throw new Error(`Failed to fetch current user presence: ${response.statusText}`);
+            let errorDisplayed = {} as any;
+            try {
+                errorDisplayed.json = await response.json();
+            } catch { };
+            errorDisplayed.statusText = response.statusText;
+            errorDisplayed.status = response.status;
+            errorDisplayed.url = response.url;
+            errorDisplayed.headers = response.headers;
+            errorDisplayed.ok = response.ok;
+            try {
+                errorDisplayed.text = await response.text();
+            } catch { };
+            throw new Error(`Failed to fetch user presence ${JSON.stringify(errorDisplayed, null, 4)}:`);
         }
         return (await response.json()) as PresenceRecord;
     }
@@ -283,17 +297,41 @@ export class Client {
         })
 
         if (!response.ok) {
-            throw new Error(`Failed to fetch batch user presence: ${response.statusText}`);
+            let errorDisplayed = {} as any;
+            try {
+                errorDisplayed.json = await response.json();
+            } catch { };
+            errorDisplayed.statusText = response.statusText;
+            errorDisplayed.status = response.status;
+            errorDisplayed.url = response.url;
+            errorDisplayed.headers = response.headers;
+            errorDisplayed.ok = response.ok;
+            try {
+                errorDisplayed.text = await response.text();
+            } catch { };
+            throw new Error(`Failed to fetch user presence ${JSON.stringify(errorDisplayed, null, 4)}:`);
         }
 
         return (await response.json()) as PresenceRecord[];
     }
 
-    public async getCurrentGroupPresence(): Promise<PresenceRecord[]> {
-        const response = await this.restful.get('https://userpresence.xboxlive.com/users/me/people', {});
+    public async getCurrentGroupPresence(level: levels): Promise<PresenceRecord[]> {
+        const response = await this.restful.get(`https://userpresence.xboxlive.com/users/me/groups/people?level=${level}`, {});
 
         if (!response.ok) {
-            throw new Error(`Failed to fetch current user group presence: ${response.statusText}`);
+            let errorDisplayed = {} as any;
+            try {
+                errorDisplayed.json = await response.json();
+            } catch { };
+            errorDisplayed.statusText = response.statusText;
+            errorDisplayed.status = response.status;
+            errorDisplayed.url = response.url;
+            errorDisplayed.headers = response.headers;
+            errorDisplayed.ok = response.ok;
+            try {
+                errorDisplayed.text = await response.text();
+            } catch { };
+            throw new Error(`Failed to fetch user presence ${JSON.stringify(errorDisplayed, null, 4)}:`);
         }
 
         return (await response.json()) as PresenceRecord[];
@@ -305,7 +343,19 @@ export class Client {
         });
 
         if (!response.ok) {
-            throw new Error(`Failed to update title presence: ${response.statusText}`);
+            let errorDisplayed = {} as any;
+            try {
+                errorDisplayed.json = await response.json();
+            } catch { };
+            errorDisplayed.statusText = response.statusText;
+            errorDisplayed.status = response.status;
+            errorDisplayed.url = response.url;
+            errorDisplayed.headers = response.headers;
+            errorDisplayed.ok = response.ok;
+            try {
+                errorDisplayed.text = await response.text();
+            } catch { };
+            throw new Error(`Failed to fetch user presence ${JSON.stringify(errorDisplayed, null, 4)}:`);
         }
 
         return await response.json();
@@ -315,43 +365,114 @@ export class Client {
         const response = await this.restful.delete(`https://userpresence.xboxlive.com/users/xuid(${xuid})/devices/current/titles/${titleId}`, {
             headers: {
                 "Authorization": this.XBL,
-                "x-xbl-contract-version": "2",
+                "x-xbl-contract-version": 3 as unknown as string,
                 "Host": "userpresence.xboxlive.com",
                 ...(deviceId && { "deviceId": deviceId }),
                 ...(deviceType && { "deviceType": deviceType }),
             }
         });
         if (!response.ok) {
-            throw new Error(`Failed to remove title presence: ${response.statusText}`);
+            let errorDisplayed = {} as any;
+            try {
+                errorDisplayed.json = await response.json();
+            } catch { };
+            errorDisplayed.statusText = response.statusText;
+            errorDisplayed.status = response.status;
+            errorDisplayed.url = response.url;
+            errorDisplayed.headers = response.headers;
+            errorDisplayed.ok = response.ok;
+            try {
+                errorDisplayed.text = await response.text();
+            } catch { };
+            throw new Error(`Failed to fetch user presence ${JSON.stringify(errorDisplayed, null, 4)}:`);
         }
         return await response.json();
     }
 
-    public async getGroupPresence(xuid: string, moniker: string, level: string = 'title'): Promise<PresenceRecord[]> {
-        const response = await this.restful.get(`https://userpresence.xboxlive.com/users/xuid(${xuid})/groups/${moniker}?level=${level}`, {});
+    public async getGroupPresence(xuid: string, level: levels): Promise<PresenceRecord[]> {
+        const response = await this.restful.get(`https://userpresence.xboxlive.com/users/xuid(${xuid})/groups/People?level=${level}`, {
+            headers: {
+                "Authorization": this.XBL,
+                "x-xbl-contract-version": 3 as unknown as string,
+                "Host": "userpresence.xboxlive.com",
+                "Accept-Language": "en-US",
+                "Accept": "application/json",
+            }
+        });
 
         if (!response.ok) {
-            throw new Error(`Failed to fetch group presence: ${response.statusText}`);
+            let errorDisplayed = {} as any;
+            try {
+                errorDisplayed.json = await response.json();
+            } catch { };
+            errorDisplayed.statusText = response.statusText;
+            errorDisplayed.status = response.status;
+            errorDisplayed.url = response.url;
+            errorDisplayed.headers = response.headers;
+            errorDisplayed.ok = response.ok;
+            try {
+                errorDisplayed.text = await response.text();
+            } catch { };
+            throw new Error(`Failed to fetch user presence ${JSON.stringify(errorDisplayed, null, 4)}:`);
         }
 
         return (await response.json()) as PresenceRecord[];
     }
 
-    public async getGroupBroadcastingPresence(xuid: string, moniker: string = 'People', level: string = 'title'): Promise<BroadCastingPresenceRecord> {
-        const response = await this.restful.get(`https://userpresence.xboxlive.com/users/xuid(${xuid})/groups/${moniker}/broadcasting?level=${level}`, {});
+    public async getGroupBroadcastingPresence(xuid: string, level: levels): Promise<BroadCastingPresenceRecord> {
+        const response = await this.restful.get(`https://userpresence.xboxlive.com/users/xuid(${xuid})/groups/People/broadcasting?level=${level}`, {
+            headers: {
+                "Authorization": this.XBL,
+                "x-xbl-contract-version": 3 as unknown as string,
+                "Host": "userpresence.xboxlive.com",
+                "Accept-Language": "en-US",
+                "Accept": "application/json",
+            }
+        });
 
         if (!response.ok) {
-            throw new Error(`Failed to fetch group broadcasting presence: ${response.statusText}`);
+            let errorDisplayed = {} as any;
+            try {
+                errorDisplayed.json = await response.json();
+            } catch { };
+            errorDisplayed.statusText = response.statusText;
+            errorDisplayed.status = response.status;
+            errorDisplayed.url = response.url;
+            errorDisplayed.headers = response.headers;
+            errorDisplayed.ok = response.ok;
+            try {
+                errorDisplayed.text = await response.text();
+            } catch { };
+            throw new Error(`Failed to fetch user presence ${JSON.stringify(errorDisplayed, null, 4)}:`);
         }
 
         return (await response.json()) as BroadCastingPresenceRecord;
     }
 
-    public async getGroupBroadcastingCount(xuid: string, moniker: string = 'People', level: string = 'title'): Promise<any> {
-        const response = await this.restful.get(`https://userpresence.xboxlive.com/users/xuid(${xuid})/groups/${moniker}/broadcasting/count?level=${level}`, {});
-        console.log(response)
+    public async getGroupBroadcastingCount(xuid: string, level: string = 'title'): Promise<any> {
+        const response = await this.restful.get(`https://userpresence.xboxlive.com/users/xuid(${xuid})/groups/People/broadcasting/count?level=${level}`, {
+            headers: {
+                "Authorization": this.XBL,
+                "x-xbl-contract-version": 3 as unknown as string,
+                "Host": "userpresence.xboxlive.com",
+                "Accept-Language": "en-US",
+                "Accept": "application/json",
+            }
+        })
         if (!response.ok) {
-            throw new Error(`Failed to fetch group broadcasting count: ${response.statusText}`);
+            let errorDisplayed = {} as any;
+            try {
+                errorDisplayed.json = await response.json();
+            } catch { };
+            errorDisplayed.statusText = response.statusText;
+            errorDisplayed.status = response.status;
+            errorDisplayed.url = response.url;
+            errorDisplayed.headers = response.headers;
+            errorDisplayed.ok = response.ok;
+            try {
+                errorDisplayed.text = await response.text();
+            } catch { };
+            throw new Error(`Failed to fetch user presence ${JSON.stringify(errorDisplayed, null, 4)}:`);
         }
 
         return (await response.json()) as { count: number };
@@ -410,11 +531,7 @@ export class Client {
             params.append(key, String(options[key]));
         }
 
-        const response = await this.restful.get(`https://social.xboxlive.com/users/xuid(${XUID})/people?${params.toString()}`, {
-            "headers": {
-                "XUID": XUID,
-            }
-        });
+        const response = await this.restful.get(`https://social.xboxlive.com/users/xuid(${XUID})/people?${params.toString()}`, {});
         if (!response.ok) {
 
             let errorDisplayed = {} as any;
@@ -459,11 +576,19 @@ export class Client {
         return await response.json();
     }
 
-    public async getFollowersXUIDs(XUID: XUID): Promise<XUID[]> {
-        const response = await this.restful.get(`https://social.xboxlive.com/users/xuid(${XUID})/people/xuids`, {
-            "headers": {
-                "XUID": XUID,
-            }
+    public async getFollowersXUIDs(XUID: XUID, XUIDS: string[]): Promise<XUID[]> {
+        const response = await this.restful.post(`https://social.xboxlive.com/users/xuid(${XUID})/people/xuids`, {
+            headers: {
+                "Authorization": this.XBL,
+                "Content-Type": "application/json",
+                "Content-Length": JSON.stringify({
+                    "xuids": XUIDS
+                }).length.toString()
+
+            },
+            body: JSON.stringify({
+                "xuids": XUIDS
+            })
         });
         if (!response.ok) {
 
@@ -484,12 +609,8 @@ export class Client {
         return (await response.json()).xuids
     }
 
-    public async getViewAsUser(viewerXUID: XUID, viewingXUID: XUID): Promise<{ "targetFollowingCount": number, "targetFollowerCount": number, "isCallerFollowingTarget": boolean, "isTargetFollowingCaller": boolean, "hasCallerMarkedTargetAsFavorite": boolean, "hasCallerMarkedTargetAsKnown": boolean, "legacyFriendStatus": string, "recentChangeCount": number, "watermark": string }> {
-        const response = await this.restful.get(`https://social.xboxlive.com/users/${viewingXUID}/summary`, {
-            "headers": {
-                "XUID": viewerXUID,
-            }
-        });
+    public async getViewAsUser(viewingXUID: XUID): Promise<{ "targetFollowingCount": number, "targetFollowerCount": number, "isCallerFollowingTarget": boolean, "isTargetFollowingCaller": boolean, "hasCallerMarkedTargetAsFavorite": boolean, "hasCallerMarkedTargetAsKnown": boolean, "legacyFriendStatus": string, "recentChangeCount": number, "watermark": string }> {
+        const response = await this.restful.get(`https://social.xboxlive.com/users/xuid(${viewingXUID})/summary`, {});
         if (!response.ok) {
             let errorDisplayed = {} as any;
             try {
