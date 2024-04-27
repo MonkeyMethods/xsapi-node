@@ -74,47 +74,46 @@ export class Client {
         })
     }
 
-    public profiles = {
-        getUserSettings: async (XUIDs: XUID[], options: UserSettings[]): Promise<Record<XUID, Record<string, any>>> => {
-            const response = await this.restful.post('https://profile.xboxlive.com/users/batch/profile/settings', {
-                body: JSON.stringify({
-                    "userIds": XUIDs,
-                    "settings": options
-                })
-            });
+    public async getUserSettings(XUIDs: XUID[], options: UserSettings[]): Promise<Record<XUID, Record<string, any>>> {
+        const response = await this.restful.post('https://profile.xboxlive.com/users/batch/profile/settings', {
+            body: JSON.stringify({
+                "userIds": XUIDs,
+                "settings": options
+            })
+        });
 
-            if (!response.ok) {
-                throw new Error(`Failed to fetch user settings: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            const userSettings = {};
-
-            for (const user of data.profileUsers) {
-                const settingsMap = {};
-
-                for (const setting of user.settings) {
-                    settingsMap[setting.id] = setting.value;
-                }
-
-                userSettings[user.id] = settingsMap;
-            }
-
-            return userSettings;
-        },
-        getUserAchievements: async (XUID: XUID, options: AchievementOptions = {}): Promise<AchievementsResponse> => {
-            // convert options to url string params;
-            const params = new URLSearchParams();
-            for (const key in options) {
-                params.append(key, String(options[key]));
-            }
-            const response = await this.restful.get(`https://achievements.xboxlive.com/users/xuid(${XUID})/achievements${params.toString()}`, {});
-
-            if (!response.ok) {
-                throw new Error(`Failed to fetch user achievements: ${response.statusText}`);
-            }
-            return (await response.json())
+        if (!response.ok) {
+            throw new Error(`Failed to fetch user settings: ${response.statusText}`);
         }
+
+        const data = await response.json();
+        const userSettings = {};
+
+        for (const user of data.profileUsers) {
+            const settingsMap = {};
+
+            for (const setting of user.settings) {
+                settingsMap[setting.id] = setting.value;
+            }
+
+            userSettings[user.id] = settingsMap;
+        }
+
+        return userSettings;
     }
+    public async getUserAchievements(XUID: XUID, options: AchievementOptions = {}): Promise<AchievementsResponse> {
+        // convert options to url string params;
+        const params = new URLSearchParams();
+        for (const key in options) {
+            params.append(key, String(options[key]));
+        }
+        const response = await this.restful.get(`https://achievements.xboxlive.com/users/xuid(${XUID})/achievements${params.toString()}`, {});
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch user achievements: ${response.statusText}`);
+        }
+        return (await response.json())
+    }
+    
 }
 
