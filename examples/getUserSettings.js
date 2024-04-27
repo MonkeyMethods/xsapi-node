@@ -7,5 +7,5 @@ const authflow = new prismarineAuth.Authflow("asd", "./profiles", {
 });
 authflow.getXboxToken().then(async (token) => {
     const client = new API.Client(token);
-    client.profiles.getUserSettings(["2533274811375291"], ["GameDisplayPicRaw", "Gamertag"]).then(console.log).catch(console.error);
+    client.getUserSettings(["2533274811375291"], ["GameDisplayPicRaw", "Gamertag"]).then(console.log).catch(console.error);
 })
