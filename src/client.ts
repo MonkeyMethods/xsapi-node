@@ -56,7 +56,68 @@ type AchievementsResponse = {
     };
 };
 
+type GetActivityResponse = {
+    "connectionString": string,
+    "currentPlayers": number,
+    "groupId": string,
+    "joinRestriction": {
+        "Followed": string,
+        "InviteOnly": string,
+        "Public": string
+    },
+    "maxPlayers": number,
+    "platform": {
+        "Android": string,
+        "IOS": string,
+        "Nintendo": string,
+        "PlayStation": string
+    },
+    "sequenceNumber": string,
+    "titleId": number
+}
 
+type UpdateMultiplayerActivity = {
+    "connectionString": string,
+    "joinRestriction": {
+        "Followed": string,
+        "InviteOnly": string,
+        "Public": string
+    },
+    "sequenceNumber": string,
+    "currentPlayers": number,
+    "groupId": string,
+    "maxPlayers": number,
+    "platform": {
+        "Android": string,
+        "IOS": string,
+        "Nintendo": string,
+        "PlayStation": string,
+        "Scarlett": string,
+        "Win32": string,
+        "WindowsOneCore": string,
+        "XboxOne": string
+    },
+    "titleId": number
+}
+
+type UpdateMultiplayerActivityResponse = {
+    "connectionString": string,
+    "currentPlayers": number,
+    "groupId": string,
+    "joinRestriction": {
+        "Followed": string,
+        "InviteOnly": string,
+        "Public": string
+    },
+    "maxPlayers": number,
+    "platform": {
+        "Android": string,
+        "IOS": string,
+        "Nintendo": string,
+        "PlayStation": string
+    },
+    "sequenceNumber": string
+}
 export class Client {
     private authorizationData: AuthorizationData;
     private restful: RESTful;
@@ -114,6 +175,34 @@ export class Client {
         }
         return (await response.json())
     }
-    
+
+    // Multiplayer Activity URIs <multiplayeractivity.xboxlive.com> | <https://learn.microsoft.com/en-us/gaming/gdk/_content/gc/reference/live/rest/uri/multiplayeractivity/atoc-reference-multiplayer-activity>
+    public async getMultiplayerActivity(titleId: number, XUID: XUID): Promise<GetActivityResponse> {
+        const response = await this.restful.get(`https://multiplayeractivity.xboxlive.com/titles/${titleId}/users/${XUID}/activities`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch multiplayer activity: ${response.statusText}`);
+        }
+        return await response.json();
+    }
+
+    public async updateMultiplayerActivity(titleId: number, XUID: XUID, activity: UpdateMultiplayerActivity): Promise<UpdateMultiplayerActivityResponse> {
+        const response = await this.restful.put(`https://multiplayeractivity.xboxlive.com/titles/${titleId}/users/${XUID}/activities`, {
+            body: JSON.stringify(activity)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to update multiplayer activity: ${response.statusText}`);
+        }
+        return (await response.json());
+    }
+
+    public async deleteMultiplayerActivity(titleId: number, XUID: XUID, sequenceNumber: string): Promise<void> {
+        const response = await this.restful.delete(`https://multiplayeractivity.xboxlive.com/titles/${titleId}/users/${XUID}/activities`, {
+            body: JSON.stringify({ sequenceNumber })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to delete multiplayer activity: ${response.statusText}`);
+        }
+        return;
+    }
 }
 
