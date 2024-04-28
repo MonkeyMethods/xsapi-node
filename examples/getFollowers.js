@@ -7,5 +7,5 @@ const authflow = new prismarineAuth.Authflow("asd", "./profiles", {
 });
 authflow.getXboxToken().then(async (token) => {
     const client = new API.Client(token);
-    client.getFollowers("2533274811375291", { view: "All", "maxItems": 100, "startIndex": 0 }).then(console.log).catch(console.error);
+    client.social.getFollowers("2533274811375291", { view: "All", "maxItems": 100, "startIndex": 0 }).then(console.log).catch(console.error);
 })

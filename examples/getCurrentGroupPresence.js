@@ -7,5 +7,5 @@ const authflow = new prismarineAuth.Authflow("asd", "./profiles", {
 });
 authflow.getXboxToken().then(async (token) => {
     const client = new API.Client(token);
-    client.getCurrentPresence().then(console.log).catch(undefined);
+    client.presence.getCurrentPresence().then(console.log).catch(undefined);
 })

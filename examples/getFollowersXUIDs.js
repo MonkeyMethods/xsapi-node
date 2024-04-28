@@ -7,5 +7,5 @@ const authflow = new prismarineAuth.Authflow("asd", "./profiles", {
 });
 authflow.getXboxToken().then(async (token) => {
     const client = new API.Client(token);
-    client.getFollowersXUIDs((await authflow.getXboxToken()).userXUID, ["2533274811375291"]).then(console.log).catch(console.error);
+    client.social.getFollowersXUIDs((await authflow.getXboxToken()).userXUID, ["2533274811375291"]).then(console.log).catch(console.error);
 })
