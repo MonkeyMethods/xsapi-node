@@ -237,6 +237,7 @@ export class Client {
 
         return userSettings;
     }
+    
     public async getUserAchievements(XUID: XUID, options: AchievementOptions = {}): Promise<AchievementsResponse> {
         // convert options to url string params;
         const params = new URLSearchParams();
@@ -531,7 +532,7 @@ export class Client {
             params.append(key, String(options[key]));
         }
 
-        const response = await this.restful.get(`https://social.xboxlive.com/users/xuid(${XUID})/people?${params.toString()}`, {});
+        const response = await this.restful.get(`https://social.xboxlive.com/users/xuid(${XUID})/people${params.size > 0 ? `?${params.toString()}` : ''}`);
         if (!response.ok) {
 
             let errorDisplayed = {} as any;
@@ -626,6 +627,42 @@ export class Client {
             } catch { };
             throw new Error(`Failed to fetch view: ${JSON.stringify(errorDisplayed, null, 4)} `);
         }
+        return await response.json();
+    }
+
+    // Achievement Title History URIs <achievements.xboxlive.com> | <https://learn.microsoft.com/en-us/gaming/gdk/_content/gc/reference/live/rest/uri/titlehistory/atoc-reference-titlehistoryv2>
+    public async getAchievementTitleHistory(XUID: XUID, options?: { skipItems?: number, continuationToken?: string, maxItems?: number }): Promise<any> {
+        const params = new URLSearchParams();
+        for (const key in options) {
+            params.append(key, String(options[key]));
+        }
+        const response = await this.restful.get(`https://achievements.xboxlive.com/users/xuid(${XUID})/history/titles${params.size > 0 ? `?${params.toString()}` : ''}`);
+        if (!response.ok) {
+            let errorDisplayed = {} as any;
+            try {
+                errorDisplayed.json = await response.json();
+            } catch { };
+            errorDisplayed.statusText = response.statusText;
+            errorDisplayed.status = response.status;
+            errorDisplayed.url = response.url;
+            errorDisplayed.headers = response.headers;
+            errorDisplayed.ok = response.ok;
+            try {
+                errorDisplayed.text = await response.text();
+            } catch { };
+            throw new Error(`Failed to fetch achievement title history: ${JSON.stringify(errorDisplayed, null, 4)} `);
+        }
+        return await response.json();
+    }
+
+    // Users URIs <msg.xboxlive.com> | <https://learn.microsoft.com/en-us/gaming/gdk/_content/gc/reference/live/rest/uri/users/atoc-reference-users>
+    public async readUserInbox(XUID: XUID, options: { maxItems?: number, continuationToken?: string, skipItems?: number }): Promise<{ results: { header: { expiration: string, id: string, messageType: string, isRead: boolean, senderXuid: string, sender: string, sent: string, hasAudio: boolean, hasPhoto: boolean, hasText: boolean }, messageSummary: string }[], pagingInfo: { continuationToken: string, totalItems: number } }> {
+        const params = new URLSearchParams();
+        for (const key in options) {
+            params.append(key, String(options[key]));
+        }
+        const response = await this.restful.get(`https://msg.xboxlive.com/users/xuid(${XUID})/inbox${params.size > 0 ? `?${params.toString()}` : ''}`);
+
         return await response.json();
     }
 }
