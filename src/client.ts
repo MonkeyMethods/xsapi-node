@@ -691,4 +691,166 @@ export class Client {
         }
         return await response.json();
     }
+
+    public get clubs() {
+        return {
+            getChat: async (clubId: string, amount: number) => {
+                const response = await this.restful.get(`https://chatfd.xboxlive.com:443/channels/Club/${clubId}/messages/history?maxItems=${amount}`);
+                if (!response.ok) {
+                    let errorDisplayed = {} as any;
+                    try {
+                        errorDisplayed.json = await response.json();
+                    } catch { };
+                    errorDisplayed.statusText = response.statusText;
+                    errorDisplayed.status = response.status;
+                    errorDisplayed.url = response.url;
+                    errorDisplayed.headers = response.headers;
+                    errorDisplayed.ok = response.ok;
+                    try {
+                        errorDisplayed.text = await response.text();
+                    } catch { };
+                    throw new Error(`Failed to fetch chat: ${JSON.stringify(errorDisplayed, null, 4)} `);
+                }
+                return await response.json();
+            },
+            getClub: async (clubId: string) => {
+                const response = await this.restful.get(`https://clubhub.xboxlive.com:443/clubs/ids(${clubId})/decoration/ClubPresence,Roster,Settings`);
+                if (!response.ok) {
+                    let errorDisplayed = {} as any;
+                    try {
+                        errorDisplayed.json = await response.json();
+                    } catch { };
+                    errorDisplayed.statusText = response.statusText;
+                    errorDisplayed.status = response.status;
+                    errorDisplayed.url = response.url;
+                    errorDisplayed.headers = response.headers;
+                    errorDisplayed.ok = response.ok;
+                    try {
+                        errorDisplayed.text = await response.text();
+                    } catch { };
+                    throw new Error(`Failed to fetch club: ${JSON.stringify(errorDisplayed, null, 4)} `);
+                }
+                return (await response.json()) as {
+                    clubs: {
+                        id: string,
+                        name: string,
+                        type: "secret" | "public",
+                        shortName: null | string,
+                        description: string,
+                        ownerXuid: string,
+                        founderXuid: string,
+                        creationDateUtc: string,
+                        displayImageUrl: string,
+                        backgroundImageUrl: string,
+                        preferredLocale: string,
+                        associatedTitles: string[],
+                        tags: string[],
+                        settings: any,
+                        preferredColor: {
+                            "primaryColor": string,
+                            "secondaryColor": string,
+                            "tertiaryColor": string
+                        },
+                        followersCount: number,
+                        membersCount: number,
+                        moderatorsCount: number,
+                        recommendedCount: number,
+                        requestedCount: number,
+                        clubPresenceCount: number,
+                        clubPresenceTodayCount: number,
+                        roster: {
+                            moderator: {
+                                "actorXuid": string,
+                                "xuid": string,
+                                "createdDate": string
+                            }[]
+                        },
+                        targetRoles: null | any,
+                        clubPresence: {
+                            "xuid": string,
+                            "lastSeenTimestamp": string,
+                            "lastSeenState": "NotInClub" | string
+                        }[],
+                        state: "None" | string,
+                        suspendedUntilUtc: null | string,
+                        reportCount: number,
+                        reportedItemsCount: number,
+                    }[],
+                    "searchFacetResults": null | any,
+                    "recommendationCounts": null | number
+                }
+            },
+            getFeed: async (clubId: string, amount: number) => {
+                const response = await this.restful.get(`https://avty.xboxlive.com:443/clubs/clubId(${clubId})/activity/feed?numItems=${amount}`);
+                if (!response.ok) {
+                    let errorDisplayed = {} as any;
+                    try {
+                        errorDisplayed.json = await response.json();
+                    } catch { };
+                    errorDisplayed.statusText = response.statusText;
+                    errorDisplayed.status = response.status;
+                    errorDisplayed.url = response.url;
+                    errorDisplayed.headers = response.headers;
+                    errorDisplayed.ok = response.ok;
+                    try {
+                        errorDisplayed.text = await response.text();
+                    } catch { };
+                    throw new Error(`Failed to fetch club feed: ${JSON.stringify(errorDisplayed, null, 4)} `);
+                }
+                return await response.json();
+            },
+            findClub: async (xuid: string) => {
+                const response = await this.restful.get(`https://clubhub.xboxlive.com:443/clubs/search/decoration/detail?count=30&q=${xuid}&tags=&titles=`);
+                if (!response.ok) {
+                    let errorDisplayed = {} as any;
+                    try {
+                        errorDisplayed.json = await response.json();
+                    } catch { };
+                    errorDisplayed.statusText = response.statusText;
+                    errorDisplayed.status = response.status;
+                    errorDisplayed.url = response.url;
+                    errorDisplayed.headers = response.headers;
+                    errorDisplayed.ok = response.ok;
+                    try {
+                        errorDisplayed.text = await response.text();
+                    } catch { };
+                    throw new Error(`Failed to fetch club: ${JSON.stringify(errorDisplayed, null, 4)} `);
+                }
+                return await response.json();
+            },
+            sendFeed: async (message: string, titleId: number, target: "all" | "club", type: "text" | "image" | "video") => {
+                const response = await this.restful.post(`https://userposts.xboxlive.com:443/users/me/posts`, {
+                    body: JSON.stringify({
+                        message,
+                        titleId,
+                        target,
+                        type
+                    })
+                });
+                if (!response.ok) {
+                    let errorDisplayed = {} as any;
+                    try {
+                        errorDisplayed.json = await response.json();
+                    } catch { };
+                    errorDisplayed.statusText = response.statusText;
+                    errorDisplayed.status = response.status;
+                    errorDisplayed.url = response.url;
+                    errorDisplayed.headers = response.headers;
+                    errorDisplayed.ok = response.ok;
+                    try {
+                        errorDisplayed.text = await response.text();
+                    } catch { };
+                    throw new Error(`Failed to send feed: ${JSON.stringify(errorDisplayed, null, 4)} `);
+                }
+                return await response.json();
+            }
+
+        }
+        // CLUB_FIND: (xuid) => `https://clubhub.xboxlive.com:443/clubs/search/decoration/detail?count=30&q=${xuid}&tags=&titles=`,
+        // CLUB_GET: (xuid) => `https://clubhub.xboxlive.com:443/clubs/ids(${xuid})/decoration/ClubPresence,Roster,Settings`,
+        // CLUB_CHAT: (xuid, amount) => `https://chatfd.xboxlive.com:443/channels/Club/${xuid}/messages/history?maxItems=${amount}`,
+        // CLUB_FEED_GET: (xuid, amount) => `https://avty.xboxlive.com:443/clubs/clubId(${xuid})/activity/feed?numItems=${amount}`,
+        // CLUB_FEED_SEND: () => `https://userposts.xboxlive.com:443/users/me/posts`,   
+
+    }
 }
