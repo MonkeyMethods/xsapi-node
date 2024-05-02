@@ -1,11 +1,16 @@
 const API = require("../dist/index");
 const prismarineAuth = require("prismarine-auth");
+const fs = require("fs");
 
-const authflow = new prismarineAuth.Authflow("main", "./profiles", {
+const authflow = new prismarineAuth.Authflow("asd", "./profiles", {
     "authTitle": prismarineAuth.Titles.MinecraftNintendoSwitch,
     "flow": "live"
 });
 authflow.getXboxToken().then(async (token) => {
     const client = new API.Client(token);
-    client.users.getSettings(["2533274811375291"], ["GameDisplayPicRaw", "Gamertag"]).then(console.log).catch(console.error);
+
+    // Get the club by club ID
+    client.users.getXUID("asd").then((data) => {
+        console.log(data);
+    }).catch(console.error);
 })

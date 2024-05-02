@@ -266,8 +266,27 @@ export class Client {
                     throw new Error(`Failed to fetch user achievements ${JSON.stringify(errorDisplayed, null, 4)}:`);
                 }
                 return (await response.json())
-            }
+            },
 
+            async getXUID(username: string): Promise<XUID> {
+                const response = await restful.get(`https://profile.xboxlive.com/users/gt(${encodeURIComponent(username)})/settings`);
+                if (!response.ok) {
+                    let errorDisplayed = {} as any;
+                    try {
+                        errorDisplayed.json = await response.json();
+                    } catch { };
+                    errorDisplayed.statusText = response.statusText;
+                    errorDisplayed.status = response.status;
+                    errorDisplayed.url = response.url;
+                    errorDisplayed.headers = response.headers;
+                    errorDisplayed.ok = response.ok;
+                    try {
+                        errorDisplayed.text = await response.text();
+                    } catch { };
+                    throw new Error(`Failed to fetch xuid ${JSON.stringify(errorDisplayed, null, 4)}:`);
+                }
+                return (await response.json()).profileUsers[0].id;
+            }
         }
     }
 

@@ -6,7 +6,8 @@
   "type": "commonjs",
   "scripts": {
     "build": "npx tsc --project tsconfig.json", 
-    "test": "npm run build && node examples/runall.js"
+    "run_examples": "npm run build && node examples/runall.js",
+    "test": "exit 1"
   },
   "keywords": [
     "api",
@@ -23,5 +24,10 @@
   },
   "dependencies": {
     "typescript": "^5.4.5"
+  },
+  "readme": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MonkeyMethods/xsapi-node/tree/main"
   }
 }

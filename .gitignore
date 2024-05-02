@@ -129,3 +129,4 @@ dist
 # todo
 todo.md
 profiles/
+examples/node_modules
