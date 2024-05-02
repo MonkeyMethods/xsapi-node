@@ -845,12 +845,6 @@ export class Client {
                 return await response.json();
             }
 
-        }
-        // CLUB_FIND: (xuid) => `https://clubhub.xboxlive.com:443/clubs/search/decoration/detail?count=30&q=${xuid}&tags=&titles=`,
-        // CLUB_GET: (xuid) => `https://clubhub.xboxlive.com:443/clubs/ids(${xuid})/decoration/ClubPresence,Roster,Settings`,
-        // CLUB_CHAT: (xuid, amount) => `https://chatfd.xboxlive.com:443/channels/Club/${xuid}/messages/history?maxItems=${amount}`,
-        // CLUB_FEED_GET: (xuid, amount) => `https://avty.xboxlive.com:443/clubs/clubId(${xuid})/activity/feed?numItems=${amount}`,
-        // CLUB_FEED_SEND: () => `https://userposts.xboxlive.com:443/users/me/posts`,   
-
+        } 
     }
 }
