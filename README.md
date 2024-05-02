@@ -35,5 +35,3 @@
 - `getFeed(clubId: string, amount: number)`: Fetches the feed of a club.
 - `findClub(xuid: string)`: Finds a club by XUID.
 - `sendFeed(message: string, titleId: number, target: "all" | "club", type: "text" | "image" | "video")`: Sends a feed message.
-
-This class provides a comprehensive interface for interacting with Xbox Live services, covering a wide range of functionalities from user settings and achievements to social interactions and club activities.
