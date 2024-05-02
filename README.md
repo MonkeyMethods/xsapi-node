@@ -1,12 +1,11 @@
 # xsapi-node
 `xsapi-node` is a TypeScript wrapper for the Xbox Services RESTful API, this package includes methods for interacting with user settings, achievements, presence, multiplayer activity, social interactions, and club activities.
 
-### User Settings
+### Users
 - `getSettings(XUIDs: XUID[], options: UserSettings[])`: Fetches settings for multiple users specified by their XUIDs.
-
-### Achievements
-- `getAchievements(XUID: XUID, options: AchievementOptions = {}): Promise<AchievementsResponse>`: Fetches achievements for a specific user.
-
+- `getAchievements(XUID: XUID, options: AchievementOptions = {})` Fetches achievements for a specific user.
+- `getXUID(username: string)` Fetches the xuid of the for the specified user.
+- `getAchievementTitleHistory(XUID: XUID, options?: { skipItems?: number, continuationToken?: string, maxItems?: number })` Fetches the achivement title history for the specified user.
 ### Presence
 - `getCurrentPresence()`: Fetches the current presence of the user.
 - `getBatchUserPresence(XUIDs: string[])`: Fetches the presence of multiple users.
@@ -17,7 +16,7 @@
 - `getGroupBroadcastingPresence(xuid: string, level: levels)`: Fetches the broadcasting presence of a group.
 - `getGroupBroadcastingCount(xuid: string, level: string = 'title')`: Fetches the count of broadcasting in a group.
 
-### Multiplayer Activity
+### Multiplayer
 - `getMultiplayerActivity(titleId: number, XUID: XUID)`: Fetches multiplayer activity for a specific user and title.
 - `updateMultiplayerActivity(titleId: number, XUID: XUID, activity: UpdateMultiplayerActivity)`: Updates multiplayer activity for a specific user and title.
 - `deleteMultiplayerActivity(titleId: number, XUID: XUID, sequenceNumber: string)`: Deletes multiplayer activity for a specific user and title.

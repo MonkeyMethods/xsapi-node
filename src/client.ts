@@ -286,6 +286,30 @@ export class Client {
                     throw new Error(`Failed to fetch xuid ${JSON.stringify(errorDisplayed, null, 4)}:`);
                 }
                 return (await response.json()).profileUsers[0].id;
+            },
+            // Achievement Title History URIs <achievements.xboxlive.com> | <https://learn.microsoft.com/en-us/gaming/gdk/_content/gc/reference/live/rest/uri/titlehistory/atoc-reference-titlehistoryv2>
+            async getAchievementTitleHistory(XUID: XUID, options?: { skipItems?: number, continuationToken?: string, maxItems?: number }): Promise<any> {
+                const params = new URLSearchParams();
+                for (const key in options) {
+                    params.append(key, String(options[key]));
+                }
+                const response = await this.restful.get(`https://achievements.xboxlive.com/users/xuid(${XUID})/history/titles${params.size > 0 ? `?${params.toString()}` : ''}`);
+                if (!response.ok) {
+                    let errorDisplayed = {} as any;
+                    try {
+                        errorDisplayed.json = await response.json();
+                    } catch { };
+                    errorDisplayed.statusText = response.statusText;
+                    errorDisplayed.status = response.status;
+                    errorDisplayed.url = response.url;
+                    errorDisplayed.headers = response.headers;
+                    errorDisplayed.ok = response.ok;
+                    try {
+                        errorDisplayed.text = await response.text();
+                    } catch { };
+                    throw new Error(`Failed to fetch achievement title history: ${JSON.stringify(errorDisplayed, null, 4)} `);
+                }
+                return await response.json();
             }
         }
     }
@@ -686,30 +710,7 @@ export class Client {
             }
         }
     }
-    // Achievement Title History URIs <achievements.xboxlive.com> | <https://learn.microsoft.com/en-us/gaming/gdk/_content/gc/reference/live/rest/uri/titlehistory/atoc-reference-titlehistoryv2>
-    public async getAchievementTitleHistory(XUID: XUID, options?: { skipItems?: number, continuationToken?: string, maxItems?: number }): Promise<any> {
-        const params = new URLSearchParams();
-        for (const key in options) {
-            params.append(key, String(options[key]));
-        }
-        const response = await this.restful.get(`https://achievements.xboxlive.com/users/xuid(${XUID})/history/titles${params.size > 0 ? `?${params.toString()}` : ''}`);
-        if (!response.ok) {
-            let errorDisplayed = {} as any;
-            try {
-                errorDisplayed.json = await response.json();
-            } catch { };
-            errorDisplayed.statusText = response.statusText;
-            errorDisplayed.status = response.status;
-            errorDisplayed.url = response.url;
-            errorDisplayed.headers = response.headers;
-            errorDisplayed.ok = response.ok;
-            try {
-                errorDisplayed.text = await response.text();
-            } catch { };
-            throw new Error(`Failed to fetch achievement title history: ${JSON.stringify(errorDisplayed, null, 4)} `);
-        }
-        return await response.json();
-    }
+
 
     public get clubs() {
         return {
@@ -864,6 +865,6 @@ export class Client {
                 return await response.json();
             }
 
-        } 
+        }
     }
 }
