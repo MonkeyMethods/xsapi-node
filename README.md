@@ -1,6 +1,22 @@
 # xsapi-node
 `xsapi-node` is a TypeScript wrapper for the Xbox Services RESTful API, this package includes methods for interacting with user settings, achievements, presence, multiplayer activity, social interactions, and club activities.
 
+### Example
+```js
+const { Client } = require("xsapi-node");
+const prismarineAuth = require("prismarine-auth");
+
+const authflow = new prismarineAuth.Authflow("asd", "./profiles", {
+    "authTitle": prismarineAuth.Titles.MinecraftNintendoSwitch,
+    "flow": "live"
+});
+authflow.getXboxToken().then(async (token) => {
+    const client = new Client(token);
+    client.users.getSettings([token.userXUID], ["ModernGamertag", "Gamerscore", "Bio"]).then(i => console.log(i)).catch(console.error);
+})
+```
+
+
 ### Users
 - `getSettings(XUIDs: XUID[], options: UserSettings[])`: Fetches settings for multiple users specified by their XUIDs.
 - `getAchievements(XUID: XUID, options: AchievementOptions = {})` Fetches achievements for a specific user.
