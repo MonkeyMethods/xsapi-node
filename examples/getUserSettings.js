@@ -1,7 +1,7 @@
 const API = require("../dist/index");
 const prismarineAuth = require("prismarine-auth");
 
-const authflow = new prismarineAuth.Authflow("main", "./profiles", {
+const authflow = new prismarineAuth.Authflow("asd", "./profiles", {
     "authTitle": prismarineAuth.Titles.MinecraftNintendoSwitch,
     "flow": "live"
 });

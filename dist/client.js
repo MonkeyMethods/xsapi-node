@@ -117,7 +117,7 @@ class Client {
                 for (const key in options) {
                     params.append(key, String(options[key]));
                 }
-                const response = await this.restful.get(`https://achievements.xboxlive.com/users/xuid(${XUID})/history/titles${params.size > 0 ? `?${params.toString()}` : ''}`);
+                const response = await restful.get(`https://achievements.xboxlive.com/users/xuid(${XUID})/history/titles${params.size > 0 ? `?${params.toString()}` : ''}`);
                 if (!response.ok) {
                     let errorDisplayed = {};
                     try {
@@ -509,7 +509,7 @@ class Client {
                     ;
                     throw new Error(`Failed to fetch friends: ${JSON.stringify(errorDisplayed, null, 4)}`);
                 }
-                return (await response.json()).xuids;
+                return (await response.json());
             },
             async getFriends(XUID, options) {
                 const params = new URLSearchParams();

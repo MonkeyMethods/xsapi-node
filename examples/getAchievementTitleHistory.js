@@ -7,5 +7,5 @@ const authflow = new prismarineAuth.Authflow("asd", "./profiles", {
 });
 authflow.getXboxToken().then(async (token) => {
     const client = new API.Client(token);
-    client.getAchievementTitleHistory("2535420857947267").then(console.log).catch(undefined);
+    client.users.getAchievementTitleHistory("2535420857947267").then(console.log).catch(console.error);
 })

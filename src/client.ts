@@ -55,6 +55,10 @@ type AchievementsResponse = {
     };
 };
 
+type GetGroupBroadcastingCountResponse = {
+    count: number
+}
+
 type PresenceRecord = {
     xuid: string;
     state: string;
@@ -175,6 +179,12 @@ type UpdateMultiplayerActivityResponse = {
     "sequenceNumber": string
 }
 
+type GetFollowersXUIDsResponse = {
+   "totalCount": number,
+    "people": any[], 
+    "incomingFriendRequestsCount": number | null,
+}
+
 type levels = 'user' | 'device' | 'title' | 'all'
 
 export class Client {
@@ -293,7 +303,7 @@ export class Client {
                 for (const key in options) {
                     params.append(key, String(options[key]));
                 }
-                const response = await this.restful.get(`https://achievements.xboxlive.com/users/xuid(${XUID})/history/titles${params.size > 0 ? `?${params.toString()}` : ''}`);
+                const response = await restful.get(`https://achievements.xboxlive.com/users/xuid(${XUID})/history/titles${params.size > 0 ? `?${params.toString()}` : ''}`);
                 if (!response.ok) {
                     let errorDisplayed = {} as any;
                     try {
@@ -498,7 +508,7 @@ export class Client {
 
                 return (await response.json()) as BroadCastingPresenceRecord;
             },
-            async getGroupBroadcastingCount(xuid: string, level: string = 'title'): Promise<any> {
+            async getGroupBroadcastingCount(xuid: string, level: string = 'title'): Promise<GetGroupBroadcastingCountResponse> { 
                 const response = await restful.get(`https://userpresence.xboxlive.com/users/xuid(${xuid})/groups/People/broadcasting/count?level=${level}`, {
                     headers: {
                         "Authorization": XBL,
@@ -631,7 +641,7 @@ export class Client {
                 return await response.json();
             },
 
-            async getFollowersXUIDs(XUID: XUID, XUIDS: string[]): Promise<XUID[]> {
+            async getFollowersXUIDs(XUID: XUID, XUIDS: string[]): Promise<GetFollowersXUIDsResponse> {
                 const response = await restful.post(`https://social.xboxlive.com/users/xuid(${XUID})/people/xuids`, {
                     headers: {
                         "Authorization": XBL,
@@ -646,7 +656,6 @@ export class Client {
                     })
                 });
                 if (!response.ok) {
-
                     let errorDisplayed = {} as any;
                     try {
                         errorDisplayed.json = await response.json();
@@ -661,7 +670,7 @@ export class Client {
                     } catch { };
                     throw new Error(`Failed to fetch friends: ${JSON.stringify(errorDisplayed, null, 4)}`);
                 }
-                return (await response.json()).xuids
+                return (await response.json())
             },
 
             async getFriends(XUID: XUID, options: { view: ("All" | "Favorite" | "LegacyXboxLiveFriends"), maxItems: number, startIndex: number }): Promise<{ "people": { "xuid": XUID, "isFavorite": boolean, "isFollowingCaller": boolean, "socialNetworks"?: string[] }, "totalCount": number }> {

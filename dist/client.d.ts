@@ -61,6 +61,9 @@ type AchievementsResponse = {
         totalRecords: number;
     };
 };
+type GetGroupBroadcastingCountResponse = {
+    count: number;
+};
 type PresenceRecord = {
     xuid: string;
     state: string;
@@ -174,6 +177,11 @@ type UpdateMultiplayerActivityResponse = {
     };
     "sequenceNumber": string;
 };
+type GetFollowersXUIDsResponse = {
+    "totalCount": number;
+    "people": any[];
+    "incomingFriendRequestsCount": number | null;
+};
 type levels = 'user' | 'device' | 'title' | 'all';
 export declare class Client {
     private authorizationData;
@@ -198,7 +206,7 @@ export declare class Client {
         removeTitlePresence(xuid: string, titleId: string, deviceId?: string, deviceType?: string): Promise<void>;
         getGroupPresence(xuid: string, level: levels): Promise<PresenceRecord[]>;
         getGroupBroadcastingPresence(xuid: string, level: levels): Promise<BroadCastingPresenceRecord>;
-        getGroupBroadcastingCount(xuid: string, level?: string): Promise<any>;
+        getGroupBroadcastingCount(xuid: string, level?: string): Promise<GetGroupBroadcastingCountResponse>;
     };
     get multiplayer(): {
         getMultiplayerActivity(titleId: number, XUID: XUID): Promise<GetActivityResponse>;
@@ -225,7 +233,7 @@ export declare class Client {
             "isFollowingCaller": boolean;
             "socialNetworks"?: string[];
         }>;
-        getFollowersXUIDs(XUID: XUID, XUIDS: string[]): Promise<XUID[]>;
+        getFollowersXUIDs(XUID: XUID, XUIDS: string[]): Promise<GetFollowersXUIDsResponse>;
         getFriends(XUID: XUID, options: {
             view: ("All" | "Favorite" | "LegacyXboxLiveFriends");
             maxItems: number;
